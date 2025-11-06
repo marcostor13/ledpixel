@@ -32,7 +32,7 @@
 		<div class="border-t border-gray-200 p-6 bg-gray-50">
 			<div class="flex justify-between items-center mb-4">
 				<span class="text-lg font-semibold text-gray-700">Total:</span>
-				<span id="cart-total" class="text-2xl font-bold text-accent">US$ 0</span>
+				<span id="cart-total" class="text-2xl font-bold text-accent">s/ 0</span>
 			</div>
 			<button 
 				id="checkout-button"
@@ -46,42 +46,32 @@
 </div>
 
 <script>
-	// Datos de productos disponibles
-	const PRODUCTS = {
-		's900': {
-			name: 'Extensor Dual Screen S900',
-			price: 799,
-			url: '/extensor-2-monitores-s900'
-		},
-		's788': {
-			name: 'Extensor Triple Screen S788',
-			price: 999,
-			url: '/extensor-3-monitores'
-		},
-		'truss-cubo': {
-			name: 'Cubo Estructura Truss de Aluminio',
-			price: 150,
-			url: '/estructura-truss-cubo'
-		},
+	// Datos de productos disponibles (usar los del cart.js si están disponibles)
+	const PRODUCTS = window.PRODUCTS || {
 		'truss-1metro': {
 			name: 'Estructura Truss de Aluminio 1 Metro',
-			price: 200,
+			price: 740,
 			url: '/estructura-truss-1metro'
 		},
 		'truss-2metros': {
 			name: 'Estructura Truss de Aluminio 2 Metros',
-			price: 350,
+			price: 1300,
 			url: '/estructura-truss-2metros'
 		},
 		'truss-3metros': {
 			name: 'Estructura Truss de Aluminio 3 Metros',
-			price: 500,
+			price: 1900,
 			url: '/estructura-truss-3metros'
+		},
+		'truss-cubo': {
+			name: 'Cubo Estructura Truss de Aluminio',
+			price: 500,
+			url: '/estructura-truss-cubo'
 		}
 	};
 
-	// Funciones de cookies
-	function getCart() {
+	// Funciones de cookies (usar las del cart.js si están disponibles)
+	const getCart = window.getCart || function() {
 		const cartCookie = document.cookie
 			.split('; ')
 			.find(row => row.startsWith('cart='));
@@ -94,9 +84,9 @@
 		} catch {
 			return [];
 		}
-	}
+	};
 
-	function saveCart(cart) {
+	const saveCart = window.saveCart || function(cart) {
 		const cartData = JSON.stringify(cart);
 		const expires = new Date();
 		expires.setTime(expires.getTime() + (30 * 24 * 60 * 60 * 1000)); // 30 días
@@ -105,7 +95,7 @@
 		// Disparar evento para actualizar contadores
 		document.dispatchEvent(new CustomEvent('cartUpdated'));
 		window.dispatchEvent(new Event('storage'));
-	}
+	};
 
 	// Función para renderizar items del carrito
 	function renderCartItems() {
@@ -127,7 +117,7 @@
 				</div>
 			`;
 			checkoutButton.disabled = true;
-			cartTotal.textContent = 'US$ 0';
+			cartTotal.textContent = 's/ 0';
 			return;
 		}
 
@@ -144,7 +134,7 @@
 					<div class="flex-1">
 						<h3 class="font-semibold text-primary">${product.name}</h3>
 						<p class="text-sm text-gray-600">Cantidad: ${item.quantity || 1}</p>
-						<p class="text-accent font-semibold mt-1">US$ ${itemTotal.toLocaleString()}</p>
+						<p class="text-accent font-semibold mt-1">s/ ${itemTotal.toLocaleString()}</p>
 					</div>
 					<div class="flex items-center gap-2">
 						<button 
@@ -179,7 +169,7 @@
 			`;
 		}).join('');
 
-		cartTotal.textContent = `US$ ${total.toLocaleString()}`;
+		cartTotal.textContent = `s/ ${total.toLocaleString()}`;
 		checkoutButton.disabled = false;
 	}
 
@@ -253,17 +243,17 @@
 			let total = 0;
 
 			cart.forEach((item) => {
-				const product = PRODUCTS[item.id as keyof typeof PRODUCTS];
+				const product = PRODUCTS[item.id];
 				if (product) {
 					const itemTotal = product.price * (item.quantity || 1);
 					total += itemTotal;
-					message += `• ${product.name} x${item.quantity || 1} - US$ ${itemTotal.toLocaleString()}\n`;
+					message += `• ${product.name} x${item.quantity || 1} - s/ ${itemTotal.toLocaleString()}\n`;
 				}
 			});
 
-			message += `\nTotal: US$ ${total.toLocaleString()}`;
+			message += `\nTotal: s/ ${total.toLocaleString()}`;
 			
-			const whatsappUrl = `https://wa.me/51987951023?text=${encodeURIComponent(message)}`;
+			const whatsappUrl = `https://wa.me/51978626187?text=${encodeURIComponent(message)}`;
 			window.open(whatsappUrl, '_blank');
 			
 			// Opcional: limpiar el carrito después de la compra

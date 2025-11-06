@@ -3,15 +3,15 @@ import LandingLayout from '../layouts/LandingLayout.astro';
 import CartIcon from '../components/CartIcon.astro';
 ---
 
-<LandingLayout title="Carrito de Compras - Perú Rocket Importaciones">
+<LandingLayout title="Carrito de Compras - Pixel Led">
 	<!-- Navegación Sticky -->
 	<nav class="fixed top-0 w-full bg-white/90 backdrop-blur-sm z-50 shadow-sm">
 		<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 			<div class="flex justify-between items-center h-20 md:h-24">
 				<a href="/" class="flex items-center h-full">
 					<img 
-						src="/logo_perurocket.png" 
-						alt="Perú Rocket Importaciones" 
+						src="/logo.png" 
+						alt="Pixel Led"
 						class="h-14 md:h-20 w-auto object-contain"
 						loading="eager"
 					/>
@@ -41,7 +41,7 @@ import CartIcon from '../components/CartIcon.astro';
 			<div id="cart-footer" class="bg-white border-2 border-gray-200 rounded-lg p-6 hidden">
 				<div class="flex justify-between items-center mb-6">
 					<span class="text-xl font-semibold text-gray-700">Total:</span>
-					<span id="cart-total" class="text-3xl font-bold text-accent">US$ 0</span>
+					<span id="cart-total" class="text-3xl font-bold text-accent">s/ 0</span>
 				</div>
 				<button 
 					id="checkout-button"
@@ -57,15 +57,25 @@ import CartIcon from '../components/CartIcon.astro';
 
 <script>
 	const PRODUCTS = {
-		's900': {
-			name: 'Extensor Dual Screen S900',
-			price: 799,
-			url: '/extensor-2-monitores-s900'
+		'truss-1metro': {
+			name: 'Estructura Truss 1 Metro',
+			price: 740,
+			url: '/estructura-truss-1metro'
 		},
-		's788': {
-			name: 'Extensor Triple Screen S788',
-			price: 999,
-			url: '/extensor-3-monitores'
+		'truss-2metros': {
+			name: 'Estructura Truss 2 Metros',
+			price: 1300,
+			url: '/estructura-truss-2metros'
+		},
+		'truss-3metros': {
+			name: 'Estructura Truss 3 Metros',
+			price: 1900,
+			url: '/estructura-truss-3metros'
+		},
+		'truss-cubo': {
+			name: 'Cubo Estructura Truss',
+			price: 500,
+			url: '/estructura-truss-cubo'
 		}
 	};
 
@@ -127,8 +137,8 @@ import CartIcon from '../components/CartIcon.astro';
 				<div class="flex items-center gap-4 p-4 bg-white rounded-lg mb-4 last:mb-0">
 					<div class="flex-1">
 						<h3 class="font-semibold text-primary text-lg">${product.name}</h3>
-						<p class="text-sm text-gray-600 mt-1">Precio unitario: US$ ${product.price.toLocaleString()}</p>
-						<p class="text-accent font-semibold text-lg mt-2">US$ ${itemTotal.toLocaleString()}</p>
+						<p class="text-sm text-gray-600 mt-1">Precio unitario: s/ ${product.price.toLocaleString()}</p>
+						<p class="text-accent font-semibold text-lg mt-2">s/ ${itemTotal.toLocaleString()}</p>
 					</div>
 					<div class="flex items-center gap-3">
 						<button 
@@ -164,7 +174,7 @@ import CartIcon from '../components/CartIcon.astro';
 		}).join('');
 
 		if (cartTotal) {
-			cartTotal.textContent = `US$ ${total.toLocaleString()}`;
+			cartTotal.textContent = `s/ ${total.toLocaleString()}`;
 		}
 		
 		if (checkoutButton) {
@@ -206,13 +216,13 @@ import CartIcon from '../components/CartIcon.astro';
 				if (product) {
 					const itemTotal = product.price * (item.quantity || 1);
 					total += itemTotal;
-					message += `• ${product.name} x${item.quantity || 1} - US$ ${itemTotal.toLocaleString()}\n`;
+					message += `• ${product.name} x${item.quantity || 1} - s/ ${itemTotal.toLocaleString()}\n`;
 				}
 			});
 
-			message += `\nTotal: US$ ${total.toLocaleString()}`;
+			message += `\nTotal: s/ ${total.toLocaleString()}`;
 			
-			const whatsappUrl = `https://wa.me/51987951023?text=${encodeURIComponent(message)}`;
+			const whatsappUrl = `https://wa.me/51978626187?text=${encodeURIComponent(message)}`;
 			window.open(whatsappUrl, '_blank');
 		});
 	}
