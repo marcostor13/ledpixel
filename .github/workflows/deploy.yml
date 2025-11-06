@@ -55,7 +55,7 @@ jobs:
       # Usa la AWS CLI (preinstalada) para sincronizar el build con el bucket.
       - name: Deploy static site to S3 Bucket
         run: |
-          aws s3 sync ./dist s3://rocket-importaciones-bucket --delete
+          aws s3 sync ./dist s3://ledpixel --delete
         # !! REEMPLAZA './ruta-a-tu-build' (ej: ./dist/nombre-del-proyecto)
         # !! REEMPLAZA 'tu-bucket-name'
         # '--delete' elimina archivos en S3 que ya no existen en tu build.
@@ -64,6 +64,6 @@ jobs:
       # Usa la AWS CLI para forzar a CloudFront a refrescar la caché.
       - name: Invalidate CloudFront Cache
         run: |
-          aws cloudfront create-invalidation --distribution-id EA6FG5VQZNGX1 --paths "/*"
+          aws cloudfront create-invalidation --distribution-id EHU4JFZPDUE5G --paths "/*"
         # !! REEMPLAZA 'tu-distribution-id' (ej: E123ABC456DEF)
         # '/*' le dice a CloudFront que invalide todos los archivos.
