@@ -680,6 +680,39 @@ import CartModal from '../components/CartModal.astro';
 			window.addEventListener('scroll', handleScroll);
 			handleScroll();
 		});
+
+		// Forzar que todos los videos estén siempre silenciados
+		function forceMuteAllVideos() {
+			const videos = document.querySelectorAll('video');
+			videos.forEach(video => {
+				video.muted = true;
+				video.volume = 0;
+				
+				// Prevenir que el usuario pueda cambiar el volumen
+				video.addEventListener('volumechange', () => {
+					video.muted = true;
+					video.volume = 0;
+				});
+				
+				video.addEventListener('play', () => {
+					video.muted = true;
+					video.volume = 0;
+				});
+			});
+		}
+
+		// Ejecutar al cargar y cuando se agreguen nuevos videos
+		forceMuteAllVideos();
+		
+		// Observar cambios en el DOM para videos dinámicos
+		const observer = new MutationObserver(() => {
+			forceMuteAllVideos();
+		});
+		
+		observer.observe(document.body, {
+			childList: true,
+			subtree: true
+		});
 	</script>
 
 	<script is:inline src="/cart.js"></script>
