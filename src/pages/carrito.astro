@@ -208,19 +208,54 @@ import CartIcon from '../components/CartIcon.astro';
 			const cart = getCart();
 			if (cart.length === 0) return;
 
+			// Mapeo de productId a content_ids de Meta Pixel
+			const PRODUCT_CONTENT_IDS: Record<string, string> = {
+				'truss-1metro': 'ntsurmt5io',
+				'truss-2metros': 'gc6jclgxyp',
+				'truss-3metros': '4p2ycbctcn',
+				'truss-cubo': 'paqdgaf9hy'
+			};
+
 			let message = 'Hola, quiero comprar los siguientes productos:\n\n';
 			let total = 0;
+			let numItems = 0;
+			const contentIds: string[] = [];
 
 			cart.forEach((item) => {
 				const product = PRODUCTS[item.id as keyof typeof PRODUCTS];
 				if (product) {
 					const itemTotal = product.price * (item.quantity || 1);
 					total += itemTotal;
+					numItems += item.quantity || 1;
 					message += `• ${product.name} x${item.quantity || 1} - s/ ${itemTotal.toLocaleString()}\n`;
+					
+					// Agregar content_id para cada unidad del producto
+					const contentId = PRODUCT_CONTENT_IDS[item.id];
+					if (contentId) {
+						for (let i = 0; i < (item.quantity || 1); i++) {
+							contentIds.push(contentId);
+						}
+					}
 				}
 			});
 
 			message += `\nTotal: s/ ${total.toLocaleString()}`;
+			
+			// Generar order_id único basado en timestamp y productos
+			const orderId = `PEDIDO_${Date.now()}_${cart.map((item: any) => item.id).join('_')}`;
+			
+			// Disparar evento Purchase de Meta Pixel
+			const win = window as any;
+			if (typeof win.fbq !== 'undefined' && contentIds.length > 0) {
+				win.fbq('track', 'Purchase', {
+					content_type: 'product',
+					content_ids: contentIds,
+					value: total,
+					currency: 'PEN',
+					num_items: numItems,
+					order_id: orderId
+				});
+			}
 			
 			const whatsappUrl = `https://wa.me/51978626187?text=${encodeURIComponent(message)}`;
 			window.open(whatsappUrl, '_blank');

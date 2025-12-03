@@ -670,15 +670,19 @@ import CartModal from '../components/CartModal.astro';
 
 		// Interceptar función addToCart para disparar evento AddToCart
 		// Esperamos a que el script cart.js se cargue
+		let metaPixelIntercepted = false;
 		function setupMetaPixelAddToCart() {
+			// Evitar múltiples interceptaciones
+			if (metaPixelIntercepted) return;
+			
 			const win = window as any;
-			if (win.addToCart && typeof win.addToCart === 'function') {
+			if (win.addToCart && typeof win.addToCart === 'function' && !win.addToCart._metaPixelWrapped) {
 				const originalAddToCart = win.addToCart;
 				win.addToCart = function(productId: string) {
 					// Llamar a la función original
 					originalAddToCart(productId);
 					
-					// Disparar evento Meta Pixel si es el producto correcto
+					// Disparar evento Meta Pixel si es el producto correcto (solo una vez)
 					if (productId === 'truss-2metros' && typeof win.fbq !== 'undefined') {
 						win.fbq('track', 'AddToCart', {
 							content_type: 'product',
@@ -688,15 +692,16 @@ import CartModal from '../components/CartModal.astro';
 						});
 					}
 				};
-			} else {
+				// Marcar como interceptado para evitar duplicados
+				win.addToCart._metaPixelWrapped = true;
+				metaPixelIntercepted = true;
+			} else if (!metaPixelIntercepted) {
 				// Si aún no está disponible, intentar de nuevo después de un breve delay
 				setTimeout(setupMetaPixelAddToCart, 100);
 			}
 		}
 
-		// Intentar configurar inmediatamente y también después de que el DOM esté listo
-		setupMetaPixelAddToCart();
-		
+		// Intentar configurar después de que el DOM esté listo
 		document.addEventListener('DOMContentLoaded', () => {
 			setupMetaPixelAddToCart();
 
