@@ -608,7 +608,49 @@ import CartModal from '../components/CartModal.astro';
 	</footer>
 
 	<script>
+		// Evento Meta Pixel: ViewContent (se dispara al cargar la página)
+		if (typeof (window as any).fbq !== 'undefined') {
+			(window as any).fbq('track', 'ViewContent', {
+				content_type: 'product',
+				content_ids: ['paqdgaf9hy'],
+				content_name: 'Cubo Estructura Truss de Aluminio',
+				value: 500.00,
+				currency: 'PEN'
+			});
+		}
+
+		// Interceptar función addToCart para disparar evento AddToCart
+		// Esperamos a que el script cart.js se cargue
+		function setupMetaPixelAddToCart() {
+			const win = window as any;
+			if (win.addToCart && typeof win.addToCart === 'function') {
+				const originalAddToCart = win.addToCart;
+				win.addToCart = function(productId: string) {
+					// Llamar a la función original
+					originalAddToCart(productId);
+					
+					// Disparar evento Meta Pixel si es el producto correcto
+					if (productId === 'truss-cubo' && typeof win.fbq !== 'undefined') {
+						win.fbq('track', 'AddToCart', {
+							content_type: 'product',
+							content_ids: ['paqdgaf9hy'],
+							value: 500.00,
+							currency: 'PEN'
+						});
+					}
+				};
+			} else {
+				// Si aún no está disponible, intentar de nuevo después de un breve delay
+				setTimeout(setupMetaPixelAddToCart, 100);
+			}
+		}
+
+		// Intentar configurar inmediatamente y también después de que el DOM esté listo
+		setupMetaPixelAddToCart();
+		
 		document.addEventListener('DOMContentLoaded', () => {
+			setupMetaPixelAddToCart();
+
 			// Array de imágenes
 			const productImages = [
 				'/ESTRUCTURAS ALUMINIO/CUBO/image00009.png',
